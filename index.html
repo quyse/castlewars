@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+    <head>
+    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>Castle Wars</title>
+		<link rel="stylesheet" type="text/css" href="styles.css"></link>
+        <script type="text/javascript" src="jquery.js"></script>
+        <script type="text/javascript" src="gl-matrix.js"></script>
+        <script type="text/javascript" src="primitives.js"></script>
+        <script type="text/javascript" src="engine.js"></script>
+        <script type="text/javascript" src="game.js"></script>
+		<script type="text/javascript" src="raphael.js"></script>
+		<script type="text/javascript" src="common.js"></script>
+        <script type="text/javascript" src="gameplay/simulation.js"></script>
+        <script type="text/javascript" src="gameplay/influence_map.js"></script>
+        <script type="text/javascript" src="gameplay/rvo.js"></script>
+        <script type="text/javascript" src="gameplay/grid.js"></script>
+        <script type="text/javascript" src="gameplay/entities.js"></script>
+        <script type="text/javascript" src="gameplay/sound.js"></script>
+        <script type="text/javascript" src="gui.js"></script>
+	</head>
+	<body>
+    	<body style="overflow:hidden; padding: 0; margin: 0; font-family: Georgia;">
+		<div id="WRAP" style="left: 50%; margin-left: -300px; position: absolute; width:600px; height:600px">
+		    <canvas id="canvas"></canvas>
+			<div style="width:100%; height:55px; font-size:10px; color:#fff; position:absolute; top:0px; left:0px;">
+				<div style="float:left; width: 50%; height:100%;">
+					WASD - Space - Alt
+					<div id="Player1_choice" style="font-size: 12px;">
+						<div style="width: 70px; float:left; margin-right:15px;">Influence<div></div></div>
+						<div style="width: 70px; float:left; margin-right:5px;">Cannon<div></div></div>
+						<div style="width: 70px; float:left; margin-right:5px;">Warrior<div></div></div>
+					</div>
+					<div id="Player1_mana" style="float:left; clear:both; margin-left:1px;"></div>
+				</div>
+				<div style="float:right; width: 50%; height:100%; text-align:right">
+					Arrows - Enter - Ctrl
+					<div id="Player2_choice" style="font-size: 12px; text-align:right">
+						<div style="width: 70px; float:right;">Warrior<div></div></div>
+						<div style="width: 70px; float:right; margin-right:5px;">Cannon<div></div></div>
+						<div style="width: 70px; float:right; margin-right:5px;">Influence<div></div></div>
+					</div>
+					<div id="Player2_mana" style="float:right; clear:both;"></div>
+				</div>
+			</div>
+			<div id="InfluenceBar" style="position:absolute; margin-left:1px; bottom:-3px; left:0px;"></div>
+
+			<div id="StartScreen" style="text-align:center; color:#fff; visibility: visible; top:0px; left:0px; position:absolute; width:100%; height:100%; background-color:#000">
+			    <div class="INNER">
+    				<div style="margin-top:170px; font-weight:bold; font-size:42px;">CASTLE WARS</div>
+    
+    				<div id="TO_GAME" style="cursor:pointer; margin-top:40px; font-weight:bold; font-size:28px;">Start</div>
+    
+    				<div id="TO_HOWTO" style="cursor:pointer; margin-top:20px; font-weight:bold; font-size:28px;">How to play</div>
+    
+    				<div id="TO_ABOUT" style="cursor:pointer; margin-top:20px; ont-weight:bold; font-size:28px;">About</div>
+                    
+                    <div style="font-size:12px; margin-top:100px; position:absolute; bottom: 35px; right: 90px;">Game is made for<br/> NextCastle Party's Devcup</div>
+    				<image style="width:100px; height:100px; position:absolute; bottom:0px; right:0px;" src="nextcastle_logo.png"/>
+		        </div>
+			</div>
+
+			<div class="SCREEN" id="HowTo" style="text-align:center; color:#888888; visibility: hidden; top:0px; left:0px; position:absolute; width:100%; height:100%; background-color:#000">
+				<div class="INNER">
+    				<div style="margin-top:40px; color:#fff; margin-bottom:20px; font-weight:bold;">HOW TO PLAY</div>
+    
+    				<div style="font-size:13px">
+    					Build influence structures to expand your territory.<br/><br/>
+    					The more you control, the more resources you have at your disposal.<br/><br/>
+    					Build towers to defend your land and summon warriors to bring your wrath to the enemy.<br/><br/>
+    					Towers are built and warriors are summoned only on the land you control.<br/><br/>
+    					The battle ends if one of the players is completely annihilated or by the timeout (7 minutes).<br/>
+    					In the latter case, player, which controls the most of the map, wins.<br/><br/>
+    					Reload the page to start a new game, sorry for the inconvenience.
+    				</div>
+    
+    				<div style="margin-top:40px; color:#fff; margin-bottom:20px; font-weight:bold">PLAYER 1 CONTROLS</div>
+    
+    				<div style="font-size:13px">
+    					<span style="font-weight:bold; color:#fff;">WASD</span> - move cursor across the map<br/>
+    					<span style="font-weight:bold; color:#fff;">Z</span> - switch between placement modes (Influence structure, Cannon tower, Warrior)<br/>
+    					<span style="font-weight:bold; color:#fff;">Space</span> - build influence structure / build cannon tower / summon warrior<br/>
+    				</div>
+    
+    				<div style="margin-top:40px; color:#fff; margin-bottom:20px; font-weight:bold">PLAYER 2 CONTROLS</div>
+    
+    				<div style="font-size:13px">
+    					<span style="font-weight:bold; color:#fff;">Keyboard arrows</span> - move cursor across the map<br/>
+    					<span style="font-weight:bold; color:#fff;">= (+)</span> - switch between placement modes (Influence structure, Cannon tower, Warrior)<br/>
+    					<span style="font-weight:bold; color:#fff;">Enter</span> - build influence structure / build cannon tower / summon warrior<br/>
+    				</div>
+    
+    				<div class="BACK" style="color:#fff; text-decoration: underline; font-weight:bold; font-size:20px; margin-top:60px; cursor:pointer;">
+    					BACK TO MAIN MENU
+    				</div>
+    			</div>
+			</div>
+
+			<div class="SCREEN" id="About" style="text-align:center; color:#ffffff; visibility: hidden; top:0px; left:0px; position:absolute; width:100%; height:100%; background-color:#000">
+				<div class="INNER">
+    				<div style="margin-top:200px">
+    					Made by: dronimal, quyse, whateverpal
+    				</div>
+    				<div style="margin-top:20px">
+    					Gameplay sounds - http://www.freesound.org/
+    				</div>
+    				<div style="margin-top:20px">
+    					Music - "Aerial Allegretto" by Weerthof<br/><div style="font-size:12px;">(Creative Commons license)</div>
+    				</div>
+    				<div class="BACK" style="text-decoration: underline; font-weight:bold; font-size:20px; margin-top:50px; cursor:pointer;">
+    					BACK TO MAIN MENU
+    				</div>
+    			</div>
+			</div>			
+
+		</div>
+
+		<audio id="BackgroundMusic" src="sound/Weerthof_-_07_-_Aerial_Alegretto.mp3" preload="auto"></audio>
+		<audio id="SoldierDeath" src="sound/soldier_death.mp3" preload="auto"></audio>
+		<audio id="GoodSoldier" src="sound/good_soldier.mp3" preload="auto"></audio>
+		<audio id="BadSoldier" src="sound/bad_soldier.mp3" preload="auto"></audio>
+		<audio id="Construction" src="sound/construction.mp3" preload="auto"></audio>
+		<audio id="Explosion" src="sound/explosion.mp3" preload="auto"></audio>
+		<audio id="SwordClash" src="sound/sword_clash.wav" preload="auto"></audio>
+		<audio id="TowerShot" src="sound/tower_shot.mp3" preload="auto"></audio>
+	</body>
+		<script type="text/javascript" src="main.js"></script>
+	</body>
+</html>

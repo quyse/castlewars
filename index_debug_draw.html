@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+    <head>
+    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>Towers</title>
+		<script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="raphael.js"></script>
+		<script type="text/javascript" src="common.js"></script>
+        <script type="text/javascript" src="gameplay/simulation.js"></script>
+        <script type="text/javascript" src="gameplay/influence_map.js"></script>
+        <script type="text/javascript" src="gameplay/rvo.js"></script>
+        <script type="text/javascript" src="gameplay/grid.js"></script>
+        <script type="text/javascript" src="gameplay/entities.js"></script>
+        <script type="text/javascript" src="gameplay/sound.js"></script>
+        <script type="text/javascript" src="gui.js"></script>
+	</head>
+	<body style="overflow:hidden; padding: 0; margin: 0; font-family: Georgia;">
+		<div id="WRAP" style="left: 50%; margin-left: -300px; position: absolute; width:600px;">
+			<div style="width:500px; height:55px; font-size:10px;">
+				<div style="float:left; width: 50%; height:100%;">
+					WASD - Space - Alt
+					<div id="Player1_choice" style="font-size: 12px;">
+						<div style="width: 70px; float:left; margin-right:15px;">Influence<div></div></div>
+						<div style="width: 70px; float:left; margin-right:5px;">Cannon<div></div></div>
+						<div style="width: 70px; float:left; margin-right:5px;">Warrior<div></div></div>
+					</div>
+					<div id="Player1_mana" style="float: left; clear:both;"></div>
+				</div>
+				<div style="float:right; width: 50%; height:100%; text-align:right">
+					Arrows - Enter - Ctrl
+					<div id="Player2_choice" style="font-size: 12px; text-align:right">
+						<div style="width: 70px; float:right;">Warrior<div></div></div>
+						<div style="width: 70px; float:right; margin-right:5px;">Cannon<div></div></div>
+						<div style="width: 70px; float:right; margin-right:5px;">Influence<div></div></div>
+					</div>
+					<div id="Player2_mana" style="float:right; clear:both;"></div>
+				</div>
+			</div>
+			<div id="DebugCanvas"></div>
+			<div id="InfluenceBar"></div>
+
+			<div id="StartScreen" style="text-align:center; color:#fff; visibility: visible; top:0px; left:0px; position:absolute; width:600px; height:600px; background-color:#000">
+				<div style="margin-top:170px; font-weight:bold; font-size:42px;">CASTLE WARS</div>
+
+				<div id="TO_GAME" style="cursor:pointer; margin-top:40px; font-weight:bold; font-size:28px;">Start</div>
+
+				<div id="TO_HOWTO" style="cursor:pointer; margin-top:20px; font-weight:bold; font-size:28px;">How to play</div>
+
+				<div id="TO_ABOUT" style="cursor:pointer; margin-top:20px; ont-weight:bold; font-size:28px;">About</div>
+
+				<image style="width:100px; height:100px; position:absolute; bottom:0px; right:0px;" src="nextcastle_logo.png"/>
+			</div>
+
+			<div class="SCREEN" id="HowTo" style="text-align:center; color:#888888; visibility: hidden; top:0px; left:0px; position:absolute; width:600px; height:600px; background-color:#000">
+				<div style="margin-top:40px; color:#fff; margin-bottom:20px; font-weight:bold;">HOW TO PLAY</div>
+
+				<div style="font-size:13px">
+					Build influence structures to expand your territory.<br/><br/>
+					The more you control, the more resources you have at your disposal.<br/><br/>
+					Build towers to defend your land and summon warriors to bring your wrath to the enemy.<br/><br/>
+					Towers are built and warriors are summoned only on the land you control.<br/><br/>
+					Reload the page to start a new game, sorry for the inconvenience.
+				</div>
+
+				<div style="margin-top:40px; color:#fff; margin-bottom:20px; font-weight:bold">PLAYER 1 CONTROLS</div>
+
+				<div style="font-size:13px">
+					<span style="font-weight:bold; color:#fff;">WASD</span> - move cursor across the map<br/>
+					<span style="font-weight:bold; color:#fff;">Alt</span> - switch between placement modes (Influence structure, Cannon tower, Warrior)<br/>
+					<span style="font-weight:bold; color:#fff;">Space</span> - build influence structure / build cannon tower / summon warrior<br/>
+				</div>
+
+				<div style="margin-top:40px; color:#fff; margin-bottom:20px; font-weight:bold">PLAYER 2 CONTROLS</div>
+
+				<div style="font-size:13px">
+					<span style="font-weight:bold; color:#fff;">Keyboard arrows</span> - move cursor across the map<br/>
+					<span style="font-weight:bold; color:#fff;">Ctrl</span> - switch between placement modes (Influence structure, Cannon tower, Warrior)<br/>
+					<span style="font-weight:bold; color:#fff;">Enter</span> - build influence structure / build cannon tower / summon warrior<br/>
+				</div>
+
+				<div class="BACK" style="color:#fff; text-decoration: underline; font-weight:bold; font-size:20px; margin-top:60px; cursor:pointer;">
+					BACK TO MAIN MENU
+				</div>
+			</div>
+
+			<div class="SCREEN" id="About" style="text-align:center; color:#ffffff; visibility: hidden; top:0px; left:0px; position:absolute; width:600px; height:600px; background-color:#000">
+				<div style="margin-top:200px">
+					Made by: Dronimal, Quyse, Whateverpal
+				</div>
+				<div style="margin-top:20px">
+					Gameplay sounds - http://www.freesound.org/
+				</div>
+				<div style="margin-top:20px">
+					Music - "Aerial Allegretto" by Weerthof<br/><div style="font-size:12px;">(Creative Commons license)</div>
+				</div>
+				<div class="BACK" style="text-decoration: underline; font-weight:bold; font-size:20px; margin-top:50px; cursor:pointer;">
+					BACK TO MAIN MENU
+				</div>
+			</div>			
+
+		</div>
+
+		<audio id="BackgroundMusic" src="sound/Weerthof_-_07_-_Aerial_Alegretto.mp3" preload="auto"></audio>
+		<audio id="SoldierDeath" src="sound/soldier_death.mp3" preload="auto"></audio>
+		<audio id="GoodSoldier" src="sound/good_soldier.mp3" preload="auto"></audio>
+		<audio id="BadSoldier" src="sound/bad_soldier.mp3" preload="auto"></audio>
+		<audio id="Construction" src="sound/construction.mp3" preload="auto"></audio>
+		<audio id="Explosion" src="sound/explosion.mp3" preload="auto"></audio>
+		<audio id="SwordClash" src="sound/sword_clash.wav" preload="auto"></audio>
+		<audio id="TowerShot" src="sound/tower_shot.mp3" preload="auto"></audio>
+	</body>
+	<script>
+		$(document).ready(function() 
+		{
+			$("#WRAP").css("marginTop", -300 + 0.5 * $(window).height());
+			$(window).resize(function(ev) {
+				$("#WRAP").css("marginTop", -300 + 0.5 * $(window).height());
+			});
+
+			$("#TO_GAME").click(function(ev){
+				$("#StartScreen").css("visibility", "hidden");
+				simulation.started = true;
+			});
+
+			$("#TO_HOWTO").click(function(ev){
+				$(".SCREEN").css("visibility", "hidden");
+				$("#HowTo").css("visibility", "visible");
+			});
+
+			$("#TO_ABOUT").click(function(ev){
+				$(".SCREEN").css("visibility", "hidden");
+				$("#About").css("visibility", "visible");
+			});
+
+			$(".BACK").click(function(ev){
+				$(".SCREEN").css("visibility", "hidden");
+			});
+			var gui = new Gui(500, 10);
+			var simulation = new Simulation(gui);
+			
+			var addMode = 1;
+			var paper = Raphael("DebugCanvas", 500, 500);
+
+			$("#DebugCanvas").click(function(ev)
+			{
+				if (addMode <= 1)
+					simulation.players[ev.ctrlKey ? 1 : 0].buildTower(addMode, ev.offsetX, ev.offsetY)
+				else
+					simulation.players[ev.ctrlKey ? 1 : 0].summonWarrior(ev.offsetX, ev.offsetY);
+			});
+
+			$(document).keyup(function(ev)
+			{
+				if (ev.keyCode >= 49 && ev.keyCode <= 51)
+				{
+					addMode = ev.keyCode - 49;
+				}
+			})
+
+
+			setInterval(function()
+			{
+				simulation.update(1 / 33);
+				paper.clear();
+
+				//return;
+				for (var i = 0, l = simulation.objects.length; i < l; ++i)
+				{
+					var object = simulation.objects[i];
+					if (object.cls == Tower || object.cls == Warrior)
+					{
+						var circle = paper.circle(object.x, object.y, object.radius);
+						circle.attr("fill", object.allegiance == 1 ? "#f00" : "#00f");
+					}
+					else if (object.cls == Shot)
+					{
+						var circle = paper.circle(object.x, object.y, 1);
+						circle.attr("fill", "#000");
+					}
+				}
+
+				var influenceNodes = simulation.influenceMap.nodes;
+				for (var i = 0, l = influenceNodes.length; i < l; ++i)
+				{
+					var row = influenceNodes[i];
+					for (var j = 0; j < row.length; ++j)
+					{
+						var node = row[j];
+						if (node.value > 0)
+						{
+							var circle = paper.circle(j * simulation.influenceMap.cellSize, i * simulation.influenceMap.cellSize, 2);
+							circle.attr("fill", "#f00");							
+						}
+						else if (node.value < 0)
+						{
+							var circle = paper.circle(j * simulation.influenceMap.cellSize, i * simulation.influenceMap.cellSize, 2);
+							circle.attr("fill", "#00f");							
+						}
+					}
+				}
+
+				var players = simulation.players;
+				var good = players[0];
+				var evil = players[1];
+				var circle = paper.circle(good.mapPosition[0], good.mapPosition[1], 4);
+				circle.attr("fill", "#0ff");
+				var circle = paper.circle(evil.mapPosition[0], evil.mapPosition[1], 4);
+				circle.attr("fill", "#0ff");
+			}, 33);
+		});
+	</script>
+</html>

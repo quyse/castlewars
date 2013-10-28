@@ -6,7 +6,7 @@ var meshTerrain, meshCloud, meshTerrainBlend, meshGrass;
 var terrainGetHeight;
 var textureBack;
 var textureTerrainNeutral, textureTerrainGood, textureTerrainBad, textureTerrainBlend;
-var terrainSize = [32, 32, 1.6];
+var terrainSize = [32, 32, 0.8];
 var textureGrass;
 
 var lightDirection = [10, 1, 1];
@@ -20,20 +20,20 @@ var towerTypes = {
         scale: [0.04, 0.04, 0.04],
         flagBasePosition: [0, 0, 74],
         flagSize: [12, 6],
-        flagTextureName: 'dark_flag2.png',
+        flagTextureName: 'dark_flag2.png'
     },
     'light_tower': {
         scale: [0.04, 0.04, 0.04],
         flagBasePosition: [0, 0, 74],
         flagSize: [8, 6],
-        flagTextureName: 'light_flag.png',
+        flagTextureName: 'light_flag.png'
     },
     'graveyard': {
         scale: [0.05, 0.05, 0.05],
         blendColor: [0, 1]
     },
     'farm': {
-        scale: [0.05, 0.05, 0.05],
+        scale: [0.04, 0.04, 0.04],
         blendColor: [1, 0]
     }
 };
@@ -46,7 +46,7 @@ var unitTypes = {
         meshName: 'ghoul.mesh.png',
         diffuseName: 'ghoul.png',
         scale: [0.25, 0.25, 0.25],
-        timeScale: 0.5,
+        timeScale: 0.4,
         animations: {
             move: {
                 begin: 0,
@@ -124,6 +124,8 @@ var addTower = function(id, type, position, radius) {
         position: [position[0], position[1], terrainGetHeight(position[0], position[1])],
         radius: radius
     };
+    if(type == 'farm')
+        towers[id].position[2] += 1;
     if(towerTypes[type].blendColor)
         needUpdateTerrainBlend = true;
 };

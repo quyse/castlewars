@@ -53,6 +53,10 @@ Tower.prototype = {
 	die: function()
 	{
 	    game.removeTower(this.id);
+	    if ("simulation" in this.shooterComponent)
+	        this.player.cannonTowersCount--;
+	    else
+	        this.player.influenceTowersCount--;
 		this.killComponents();
 	}
 
@@ -376,6 +380,11 @@ Player.prototype = {
 		this.xMove = 0;
 		this.yMove = 0;
 		this.addMode = 0;
+		
+		this.influenceTowers = {};
+		this.cannonTowers = {};
+		this.influenceTowersCount = 0;
+		this.cannonTowersCount = 0;
 	},
 
 	handleKeyEvent: function(event)
@@ -395,7 +404,7 @@ Player.prototype = {
 			down = 40;
 			left = 37;
 			right = 39;
-			choiceLoop = 187;
+			choiceLoop = 80;
 			placement = 13; 
 		}
 
@@ -465,6 +474,10 @@ Player.prototype = {
 		var influence = this.simulation.influenceMap.getValueAt(x, y);
 		var freePosition = this.simulation.isPositionFree(x, y, towerType == 0 ? junk.controlTowerRadius : junk.cannonTowerRadius);
 		var manaCost = towerType == 0 ? junk.controlTowerManaCost : junk.cannonTowerManaCost;
+		
+		if (towerType == 1 && 2 * this.influenceTowersCount <= this.cannonTowersCount)
+		    return;
+		
 		if ((influence * this.allegiance > 0 || noInfluenceCheck) && freePosition && manaCost <= this.mana)
 		{		
 			if (!noInfluenceCheck)
@@ -484,6 +497,16 @@ Player.prototype = {
 				influenceComponent = {};
 			}
 			var object = this.simulation.createObject(Tower, x, y, this.allegiance, shooterComponent, structureComponent, influenceComponent, movementComponent);
+			if (towerType == 0)
+			{
+			    ++this.influenceTowersCount;
+			}
+			else
+			{
+			    ++this.cannonTowersCount;			    
+			}
+			object.player = this;
+			
 			movementComponent.setOwner(object);
 			if ("setOwner" in shooterComponent)
 				shooterComponent.setOwner(object);

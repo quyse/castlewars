@@ -81,8 +81,8 @@ Simulation.prototype = {
         	this.players[1].buildTower(0, this.mapSize - 50, this.mapSize - 50, this.players[0].allegiance, true);	        
 	    }
 	    
-		if (!this.sound.isPlaying("BackgroundMusic"))
-			this.sound.play("BackgroundMusic", 0.8, 0, 1);
+		//if (!this.sound.isPlaying("BackgroundMusic"))
+		//	this.sound.play("BackgroundMusic", 0.8, 0, 1);
 		this.sound.update();
 
 		if (!this.started)
@@ -118,7 +118,8 @@ Simulation.prototype = {
 		this.gui.setInfluenceDistribution(imap.positiveNodesCount / imap.totalNodesCount, imap.negativeNodesCount / imap.totalNodesCount);
 		this.gui.setSelectionStates({mode: this.players[0].addMode, enoughMana: this.players[0].enoughMana()}, {mode: this.players[1].addMode, enoughMana: this.players[1].enoughMana()})
 		this.gui.setMana({mana: this.players[0].mana, maxMana: this.players[0].maxMana}, {mana: this.players[1].mana, maxMana: this.players[1].maxMana});
-    
+        this.gui.setCannonLimits(this.players);
+        
         game.cursors[0].position = [this.players[0].mapPosition[0] / this.mapSize, this.players[0].mapPosition[1] / this.mapSize];
         game.cursors[1].position = [this.players[1].mapPosition[0] / this.mapSize, this.players[1].mapPosition[1] / this.mapSize];
     
@@ -179,6 +180,8 @@ Simulation.prototype = {
 		}
         
         var now = new Date().getTime() - this.startDate;
+        this.gui.setTimeLeft(Math.max(0, 1000 * 60 * 7 - now));
+        //console.log(now);
         if (now > 1000 * 60 * 7)
         {
             if (this.influenceMap.positiveNodesCount > this.influenceMap.negativeNodesCount)

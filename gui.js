@@ -7,12 +7,12 @@ function Gui(influenceBarWidth, influenceBarHeight)
 	this.goodChoicesDiv = $("#Player1_choice")[0];
 	this.badChoicesDiv = $("#Player2_choice")[0];
 
-	this.manaWidth = 210;
+	this.manaWidth = 250;
 	this.manaHeight = 10;
 	this.goodMana = Raphael("Player1_mana", this.manaWidth, this.manaHeight);
 	this.badMana = Raphael("Player2_mana", this.manaWidth, this.manaHeight);
 	var that = this;
-	$(window).resize(function(ev) { console.log("OK"); that.influenceBar.remove(); that.influenceBarWidth = $(window).height(); that.influenceBar = Raphael("InfluenceBar", that.influenceBarWidth, influenceBarHeight); });
+	$(window).resize(function(ev) { that.influenceBar.remove(); that.influenceBarWidth = $(window).height(); that.influenceBar = Raphael("InfluenceBar", that.influenceBarWidth, influenceBarHeight); });
 } 
 Gui.prototype = {
 
@@ -62,7 +62,7 @@ Gui.prototype = {
 		{
 			var modeCell = $(children[i]);
 			modeCell.css("font-weight", i == good.mode ? "bold" : "normal");
-			var status = $(modeCell.children()[0]);
+			var status = $(modeCell.children()[1]);
 			status.text(good.mode == i ? (good.enoughMana ? "READY!" : "NO MANA!") : "");
 		}
 
@@ -71,9 +71,30 @@ Gui.prototype = {
 		{
 			var modeCell = $(children[i]);
 			modeCell.css("font-weight", 2 - i == bad.mode ? "bold" : "normal");
-			var status = $(modeCell.children()[0]);
+			var status = $(modeCell.children()[1]);
 			status.text(bad.mode == 2 - i ? (bad.enoughMana ? "READY!" : "NO MANA!") : "");
 		}
+	},
+	
+	setTimeLeft: function(time)
+	{
+	    var totalSeconds = Math.round(time / 1000);
+	    var minutes = String(Math.floor(totalSeconds / 60));
+	    var seconds = String(totalSeconds - 60 * minutes);
+	    if (minutes.length < 2)
+	        minutes = "0" + minutes;
+	    if (seconds.length < 2)
+	        seconds = "0" + seconds;
+	    $("#Timer").text(minutes + ":" + seconds);
+	},
+	
+	setCannonLimits: function(players)
+	{
+	    var children = $(this.goodChoicesDiv).children();
+	    $($(children[1]).children()[0]).text("Cannon " + players[0].cannonTowersCount + "/" + (2 * players[0].influenceTowersCount));
+
+	    children = $(this.badChoicesDiv).children();
+	    $($(children[1]).children()[0]).text("Cannon " + players[1].cannonTowersCount + "/" + (2 * players[1].influenceTowersCount));	    
 	}
 
 };

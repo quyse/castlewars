@@ -1,4 +1,23 @@
 $(document).ready(function() {
+	var flashvars = {
+	};
+	var params = {
+		menu: "false",
+		scale: "noScale",
+		allowFullscreen: "true",
+		allowScriptAccess: "always",
+		bgcolor: "",
+		wmode: "direct" // can cause issues with FP settings & webcam
+	};
+	var attributes = {
+		id:"musicloop"
+	};
+	swfobject.embedSWF(
+		"musicloop.swf", 
+		"SWF", "100%", "100%", "10.0.0", 
+		"expressInstall.swf", 
+		flashvars, params, attributes);
+    
     
 	window.gui = new Gui(600, 10);
 	window.simulation = new Simulation(gui);

@@ -5,6 +5,7 @@
 		<title>Castle Wars</title>
 		<link rel="stylesheet" type="text/css" href="styles.css"></link>
         <script type="text/javascript" src="jquery.js"></script>
+        <script type="text/javascript" src="swfobject.js"></script>
         <script type="text/javascript" src="gl-matrix.js"></script>
         <script type="text/javascript" src="primitives.js"></script>
         <script type="text/javascript" src="engine.js"></script>
@@ -25,25 +26,26 @@
 		    <canvas id="canvas"></canvas>
 			<div style="width:100%; height:55px; font-size:10px; color:#fff; position:absolute; top:0px; left:0px;">
 				<div style="float:left; width: 50%; height:100%;">
-					WASD - Space - Alt
+					WASD - Space - Z
 					<div id="Player1_choice" style="font-size: 12px;">
-						<div style="width: 70px; float:left; margin-right:15px;">Influence<div></div></div>
-						<div style="width: 70px; float:left; margin-right:5px;">Cannon<div></div></div>
-						<div style="width: 70px; float:left; margin-right:5px;">Warrior<div></div></div>
+						<div style="width: 80px; float:left; margin-right:15px;"><div>Influence</div><div></div></div>
+						<div style="width: 80px; float:left; margin-right:5px;"><div>Cannon</div><div></div></div>
+						<div style="width: 80px; float:left; margin-right:5px;"><div>Warrior</div><div></div></div>
 					</div>
-					<div id="Player1_mana" style="float:left; clear:both; margin-left:1px;"></div>
+					<div id="Player1_mana" style="float:left; clear:both; margin-left:0px;"></div>
 				</div>
 				<div style="float:right; width: 50%; height:100%; text-align:right">
-					Arrows - Enter - Ctrl
+					Arrows - Enter - P
 					<div id="Player2_choice" style="font-size: 12px; text-align:right">
-						<div style="width: 70px; float:right;">Warrior<div></div></div>
-						<div style="width: 70px; float:right; margin-right:5px;">Cannon<div></div></div>
-						<div style="width: 70px; float:right; margin-right:5px;">Influence<div></div></div>
+						<div style="width: 80px; float:right;"><div>Warrior</div><div></div></div>
+						<div style="width: 80px; float:right; margin-right:5px;"><div>Cannon</div><div></div></div>
+						<div style="width: 80px; float:right; margin-right:5px;"><div>Influence</div><div></div></div>
 					</div>
 					<div id="Player2_mana" style="float:right; clear:both;"></div>
 				</div>
 			</div>
-			<div id="InfluenceBar" style="position:absolute; margin-left:1px; bottom:-3px; left:0px;"></div>
+			<div id="Timer" style="color:#fff; position:absolute; margin:0px; top:10px; left:50%; margin-left:-20px"></div>
+			<div id="InfluenceBar" style="position:absolute; margin-left:0px; bottom:-3px; left:0px;"></div>
 
 			<div id="StartScreen" style="text-align:center; color:#fff; visibility: visible; top:0px; left:0px; position:absolute; width:100%; height:100%; background-color:#000">
 			    <div class="INNER">
@@ -53,9 +55,9 @@
     
     				<div id="TO_HOWTO" style="cursor:pointer; margin-top:20px; font-weight:bold; font-size:28px;">How to play</div>
     
-    				<div id="TO_ABOUT" style="cursor:pointer; margin-top:20px; ont-weight:bold; font-size:28px;">About</div>
+    				<div id="TO_ABOUT" style="cursor:pointer; margin-top:20px; font-weight:bold; font-size:28px;">About</div>
                     
-                    <div style="font-size:12px; margin-top:100px; position:absolute; bottom: 35px; right: 90px;">Game is made for<br/> NextCastle Party's Devcup</div>
+                    <div style="font-size:12px; margin-top:100px; position:absolute; bottom: 35px; right: 90px;">Game was made for<br/> NextCastle Party's Devcup</div>
     				<image style="width:100px; height:100px; position:absolute; bottom:0px; right:0px;" src="nextcastle_logo.png"/>
 		        </div>
 			</div>
@@ -69,6 +71,7 @@
     					The more you control, the more resources you have at your disposal.<br/><br/>
     					Build towers to defend your land and summon warriors to bring your wrath to the enemy.<br/><br/>
     					Towers are built and warriors are summoned only on the land you control.<br/><br/>
+    					There is a limit for amount of towers - you can only have two for each influence structure you own.<br/><br/>
     					The battle ends if one of the players is completely annihilated or by the timeout (7 minutes).<br/>
     					In the latter case, player, which controls the most of the map, wins.<br/><br/>
     					Reload the page to start a new game, sorry for the inconvenience.
@@ -86,7 +89,7 @@
     
     				<div style="font-size:13px">
     					<span style="font-weight:bold; color:#fff;">Keyboard arrows</span> - move cursor across the map<br/>
-    					<span style="font-weight:bold; color:#fff;">= (+)</span> - switch between placement modes (Influence structure, Cannon tower, Warrior)<br/>
+    					<span style="font-weight:bold; color:#fff;">P</span> - switch between placement modes (Influence structure, Cannon tower, Warrior)<br/>
     					<span style="font-weight:bold; color:#fff;">Enter</span> - build influence structure / build cannon tower / summon warrior<br/>
     				</div>
     
@@ -114,15 +117,10 @@
 			</div>			
 
 		</div>
-
-		<audio id="BackgroundMusic" src="sound/Weerthof_-_07_-_Aerial_Alegretto.mp3" preload="auto"></audio>
-		<audio id="SoldierDeath" src="sound/soldier_death.mp3" preload="auto"></audio>
-		<audio id="GoodSoldier" src="sound/good_soldier.mp3" preload="auto"></audio>
-		<audio id="BadSoldier" src="sound/bad_soldier.mp3" preload="auto"></audio>
-		<audio id="Construction" src="sound/construction.mp3" preload="auto"></audio>
-		<audio id="Explosion" src="sound/explosion.mp3" preload="auto"></audio>
-		<audio id="SwordClash" src="sound/sword_clash.wav" preload="auto"></audio>
-		<audio id="TowerShot" src="sound/tower_shot.mp3" preload="auto"></audio>
+		
+		<div id="SWF">
+		    <p><a href="http://www.adobe.com/go/getflashplayer">Get Adobe Flash player</a></p>
+	    </div>
 	</body>
 		<script type="text/javascript" src="main.js"></script>
 	</body>

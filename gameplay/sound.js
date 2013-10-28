@@ -18,24 +18,10 @@ Sound.prototype = {
 		var now = new Date().getTime() * 0.001;
 		var last = this.lastTimesStarted[id] || 0;
 
-		var count = 0;
-		for (var i = 0, l = this.playingSounds.length; i < l; ++i)
+		if (now - last > distance)
 		{
-			if (this.playingSounds[i].soundId == id)
-				count += 1;
-		}
-
-		if (now - last > distance && count < limit && this.channels.length > 0)
-		{
-			var channel = this.channels.pop();
 			this.lastTimesStarted[id] = now;
-			var tag = $("#" + id);
-			channel.src = tag[0].src;
-			channel.load();
-			channel.play();
-			channel.volume = volume;
-			channel.soundId = id;
-			this.playingSounds.push(channel);
+			document["musicloop"].playSound(id, volume);
 		}
 	},
 
@@ -51,7 +37,7 @@ Sound.prototype = {
 
 	update: function()
 	{
-		var aliveSounds = [];
+		/*var aliveSounds = [];
 		for (var i = 0, l = this.playingSounds.length; i < l; ++i)
 		{
 			var channel = this.playingSounds[i];
@@ -64,7 +50,7 @@ Sound.prototype = {
 				aliveSounds.push(channel);
 			}
 		}
-		this.playingSounds = aliveSounds;
+		this.playingSounds = aliveSounds;*/
 	}
 
 };

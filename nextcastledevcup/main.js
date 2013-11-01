@@ -14,7 +14,7 @@ $(document).ready(function() {
 	};
 	swfobject.embedSWF(
 		"musicloop.swf", 
-		"SWF", "100%", "100%", "10.0.0", 
+		"SWF", "0%", "0%", "10.0.0", 
 		"expressInstall.swf", 
 		flashvars, params, attributes);
     
